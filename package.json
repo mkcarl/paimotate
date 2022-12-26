@@ -1,0 +1,19 @@
+{
+  "name": "paimotate",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1282.0",
+    "dotenv": "^16.0.3",
+    "ffmpeg-extract-frames": "^2.0.2",
+    "firebase-admin": "^11.4.1",
+    "lodash": "^4.17.21",
+    "ytdl-core": "^4.11.2"
+  },
+  "author": "",
+  "license": "ISC"
+}
