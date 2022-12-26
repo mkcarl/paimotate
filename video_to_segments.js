@@ -2,8 +2,10 @@ const ytdl = require("ytdl-core")
 const {execSync} = require("child_process")
 const fs = require("fs");
 const aws = require("aws-sdk")
+const {recordInFirestore} = require("./firebase_functions");
 require("dotenv").config()
 
+console.log(process.env.AWS_BUCKET_NAME)
 aws.config.update({
     apiVersion: "latest",
     credentials: {accessKeyId: process.env.AWS_ACCESS_KEY, secretAccessKey: process.env.AWS_SECRET_KEY},
@@ -92,6 +94,7 @@ exports.convertVideoToSegment = async (url) => {
         extractFrames(info.videoDetails.videoId, 60)
         await uploadToS3(`${info.videoDetails.videoId}`)
         await recordInDynamo(info.videoDetails.videoId)
+        await recordInFirestore(info.videoDetails.videoId)
     }
     else{
         console.log("Video entry already exist!");

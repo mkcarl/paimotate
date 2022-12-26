@@ -2,17 +2,11 @@ const aws = require("aws-sdk")
 const fs = require("fs")
 const {execSync} = require("child_process")
 const admin = require("firebase-admin")
-const {readdir} = require("fs/promises");
-const {randomUUID} = require("crypto");
 const _ = require("lodash");
+const {uploadToFirebase} = require("./firebase_functions");
 require("dotenv").config()
 
 
-admin.initializeApp({
-    storageBucket: "paimon-dataset.appspot.com",
-    credential: admin.credential.cert("credentials.json")
-});
-const firebaseBucket = admin.storage().bucket()
 const s3 = new aws.S3()
 aws.config.update({apiVersion:"latest", credentials:{accessKeyId:process.env.AWS_ACCESS_KEY, secretAccessKey:process.env.AWS_SECRET_KEY}})
 tempFile = "/tmp"
@@ -35,29 +29,6 @@ async function extractFrames(filePath){
     console.log("Done extracting frames")
 }
 
-async function uploadToFirebase(key){
-    [pathName, file] = key.split('/')
-    console.log("Starting upload");
-    const allUpload = [];
-    for (const frame of await readdir(`${tempFile}/output`)) {
-        const upload = firebaseBucket.upload(`${tempFile}/output/${frame}`, {
-            public: true,
-            destination: `uncropped/${pathName}/${frame}`,
-            metadata: {
-                metadata: {
-                    firebaseStorageDownloadTokens:randomUUID()
-
-                }
-            }
-        })
-        allUpload.push(upload)
-    }
-    for (const partUpload of _.chunk(allUpload, 15)) {
-        console.log(`Uploading ${partUpload.length} files`)
-        await Promise.all(partUpload)
-    }
-    console.log("Done upload")
-}
 
 exports.videoToFrames = async (key) => {
     await downloadFromS3(key)

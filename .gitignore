@@ -78,7 +78,5 @@ fabric.properties
 # Ignore build folder
 .aws-sam/
 
-.env
-credentials.json
 node_modules
 .idea
