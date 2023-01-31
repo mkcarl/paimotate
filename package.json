@@ -11,6 +11,7 @@
     "dotenv": "^16.0.3",
     "ffmpeg-extract-frames": "^2.0.2",
     "firebase-admin": "^11.4.1",
+    "fluent-ffmpeg": "^2.1.2",
     "lodash": "^4.17.21",
     "ytdl-core": "^4.11.2"
   },
