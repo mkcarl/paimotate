@@ -3,6 +3,8 @@ const ytdl = require("ytdl-core");
 const {execSync} = require("child_process")
 const ffmpeg = require("fluent-ffmpeg");
 const {uploadToFirebase, recordInFirestore, recordExistInFirestore} = require("./firebase_functions");
+const prompt = require('prompt-sync')({sigint: true});
+
 require("dotenv").config()
 
 
@@ -61,7 +63,9 @@ async function frames(info){
 }
 
 async function main(){
-    const info = await ytdl.getInfo("https://www.youtube.com/watch?v=S9fiZuwHCVY")
+    const url = prompt("Enter a YouTube URL: ")
+    const info = await ytdl.getInfo(url)
+    console.log(`Title: ${info.videoDetails.title}`)
     if (await recordExistInFirestore(info.videoDetails.videoId)) {
         console.log("Record already exists")
         return
@@ -71,5 +75,7 @@ async function main(){
     await frames(info)
     await uploadToFirebase(`temp/${info.videoDetails.videoId}/output`, info.videoDetails.videoId)
     await recordInFirestore(info.videoDetails.videoId)
+    fs.rmdirSync(`${path}/${info.videoDetails.videoId}`, {recursive: true})
+    fs.rmSync(`${path}/${info.videoDetails.videoId}.mp4`)
 }
 main().then()

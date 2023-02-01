@@ -31,7 +31,7 @@ function extractFrames(videoId, secondsPerFrame) {
     if (!fs.existsSync("/tmp/segments")) fs.mkdirSync("/tmp/segments")
     if (!fs.existsSync(`/tmp/segments/${videoId}`)) fs.mkdirSync(`/tmp/segments/${videoId}`)
 
-    const command = `ffmpeg -i "/tmp/downloads/${videoId}.mp4" -f segment -segment_time ${secondsPerFrame} -vcodec copy -reset_timestamps 1 -map 0:0 -an /tmp/segments/${videoId}/segment%04d.mp4`
+    const command = `ffmpeg -i "/tmp/downloads/${videoId}.mp4"  -f segment -segment_time ${secondsPerFrame} -vcodec copy -reset_timestamps 1 -map 0:0 -an /tmp/segments/${videoId}/segment%04d.mp4`
     console.log("Extracting frames")
     execSync(command)
     console.log("Done extracting")

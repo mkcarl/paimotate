@@ -13,6 +13,7 @@
     "firebase-admin": "^11.4.1",
     "fluent-ffmpeg": "^2.1.2",
     "lodash": "^4.17.21",
+    "prompt-sync": "^4.2.0",
     "ytdl-core": "^4.11.2"
   },
   "author": "",
