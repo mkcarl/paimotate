@@ -3,6 +3,7 @@ const ytdl = require("ytdl-core");
 const {execSync} = require("child_process")
 const ffmpeg = require("fluent-ffmpeg");
 const {uploadToFirebase, recordInFirestore, recordExistInFirestore} = require("./firebase_functions");
+const {uploadFiles} = require("./cloudinary");
 const prompt = require('prompt-sync')({sigint: true});
 
 require("dotenv").config()
@@ -66,15 +67,15 @@ async function main(){
     const url = prompt("Enter a YouTube URL: ")
     const info = await ytdl.getInfo(url)
     console.log(`Title: ${info.videoDetails.title}`)
-    if (await recordExistInFirestore(info.videoDetails.videoId)) {
-        console.log("Record already exists")
-        return
-    }
+    // if (await recordExistInFirestore(info.videoDetails.videoId)) {
+    //     console.log("Record already exists")
+    //     return
+    // }
     await downloadFromYoutube(info)
     await segmentVideo(info)
     await frames(info)
-    await uploadToFirebase(`temp/${info.videoDetails.videoId}/output`, info.videoDetails.videoId)
-    await recordInFirestore(info.videoDetails.videoId)
+    await uploadFiles(`temp/${info.videoDetails.videoId}/output`, info.videoDetails.videoId)
+    // await recordInFirestore(info.videoDetails.videoId)
     fs.rmdirSync(`${path}/${info.videoDetails.videoId}`, {recursive: true})
     fs.rmSync(`${path}/${info.videoDetails.videoId}.mp4`)
 }
