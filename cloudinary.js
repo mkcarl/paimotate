@@ -17,7 +17,7 @@ exports.uploadFiles = async (folder, videoId)=> {
     const files = (await readdir(folder)).slice(1)
     const allUpload = []
     for (const file of files){
-        const upload = cloudinary.uploader.upload(`${folder}/${file}`, {public_id:`${videoId}/${file}`})
+        const upload = cloudinary.uploader.upload(`${folder}/${file}`, {public_id:`crowdmon/${videoId}/${file}`})
         allUpload.push(upload)
     }
     for (const chunk of _.chunk(allUpload, 20)){
