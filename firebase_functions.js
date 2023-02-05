@@ -3,6 +3,7 @@ const {readdir} = require("fs/promises");
 const {randomUUID} = require("crypto");
 const _ = require("lodash");
 const {getFirestore} = require("firebase-admin/firestore");
+const cloudinary = require("cloudinary").v2;
 
 
 admin.initializeApp({
@@ -78,3 +79,37 @@ exports.uploadToFirebase = async (folder, videoId)=> {
     }
     console.log("Done upload")
 }
+
+exports.uploadURLtoFirestore = async (videoId)=>{
+    const allImages = []
+
+    let nextCursor = null
+    while (true){
+        const res = await cloudinary.api.resources(
+            {prefix: `crowdmon/${videoId}`, type: 'upload', max_results: 500, next_cursor: nextCursor}
+        );
+        const images = res.resources
+
+        for (const image of images) {
+            allImages.push({
+                name: image.public_id,
+                url: image.url
+            })
+        }
+        console.log(`Collected ${allImages.length} frames`)
+        if (!res.next_cursor){
+            console.log(`Done collecting`)
+            break
+        }
+        nextCursor = res.next_cursor
+
+    }
+    const data= {
+        name: videoId,
+        frames: allImages
+    }
+
+    await db.collection('videos').doc().set(data)
+
+}
+

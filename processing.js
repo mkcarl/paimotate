@@ -3,6 +3,7 @@ const ytdl = require("ytdl-core");
 const {execSync} = require("child_process")
 const ffmpeg = require("fluent-ffmpeg");
 const {uploadFiles} = require("./cloudinary");
+const {recordInFirestore, recordExistInFirestore, uploadURLtoFirestore} = require("./firebase_functions");
 const prompt = require('prompt-sync')({sigint: true});
 
 require("dotenv").config()
@@ -75,6 +76,7 @@ async function main(){
     await frames(info)
     await uploadFiles(`temp/${info.videoDetails.videoId}/output`, info.videoDetails.videoId)
     await recordInFirestore(info.videoDetails.videoId)
+    await uploadURLtoFirestore(info.videoDetails.videoId)
     fs.rmdirSync(`${path}/${info.videoDetails.videoId}`, {recursive: true})
     fs.rmSync(`${path}/${info.videoDetails.videoId}.mp4`)
 }
